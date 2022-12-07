@@ -7,6 +7,7 @@ defmodule AuthIntroduct.MixProject do
       version: "0.1.0",
       elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
+      package: package(),
       deps: deps()
     ]
   end
@@ -21,8 +22,24 @@ defmodule AuthIntroduct.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
+      {:cowboy, "~> 2.9"},
+      {:plug, "~> 0.14 or ~> 1.0"},
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
+      #      {:comeonin, "~> 4.0"},
+      #      {:bcrypt_elixir, "~> 1.0"},
+      #      {:guardian, "~> 1.0"},
+      {:joken, "~> 2.5"},
+      {:envar, "~> 1.1.0"}
+    ]
+  end
+
+  defp package do
+    [
+      contributors: ["Yuliia Ivanova"],
+      licenses: ["MIT"],
+      links: %{github: "https://github.com/ivanova-zz/auth_introduct"},
+      files: ~w(lib mix.exs README.md),
+      description: "auth plug"
     ]
   end
 end
