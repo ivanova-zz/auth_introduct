@@ -11,11 +11,10 @@ defmodule AuthIntroduct do
     iss = Keyword.get(options, :iss)
     quote do
       alias unquote(behaviour), as: Mod
-      #      def init(options) do
-      #        options
-      #      end
+
       @aud unquote(aud)
       @iss unquote(iss)
+
       def call(conn, options) do
         user_id = conn.body_params[options[:key]]
         token = get_token(conn.req_headers)
@@ -41,7 +40,7 @@ defmodule AuthIntroduct do
         end
       end
 
-      def generate_token(conn, opt, aud, iss) do
+      def generate_token(conn, opt) do
         IO.puts("@aud: #{inspect @aud}")
         IO.puts("@iss: #{inspect @iss}")
         IO.puts("resp body: #{inspect conn.body_params}")
