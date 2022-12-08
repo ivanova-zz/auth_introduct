@@ -21,8 +21,6 @@ defmodule AuthIntroduct do
         IO.puts("authorization: #{inspect token}")
         #        IO.puts("test_check_user: #{inspect Mod.get_user_id(user_id)}")
         IO.puts("options_call: #{inspect options}")
-        IO.puts("@aud: #{inspect @aud}")
-        IO.puts("@iss: #{inspect @iss}")
         secret_key = get_secret_key
         IO.puts("secret_key: #{inspect secret_key}")
         {:ok, jwt_body} = verify_jwt(token, secret_key, @aud, @iss)
@@ -31,7 +29,8 @@ defmodule AuthIntroduct do
         {:ok, role} = Map.fetch(jwt_body, "role")
 
         IO.puts("sub: #{inspect sub}")
-        answer = validate_user_id(user_id, sub, Mod.get_user_id(user_id))
+        user = Mod.get_user(user_id)
+        answer = validate_user_id(user_id, sub, user, role, Mod.get_role(user.role_id))
         IO.puts("validate_user: #{inspect answer}")
         if {:ok, :authorized} == answer do
           conn
