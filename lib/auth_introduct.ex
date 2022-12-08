@@ -7,11 +7,15 @@ defmodule AuthIntroduct do
   defmacro __using__(options) do
     IO.puts("options in using: #{inspect options}")
     behaviour = get_module(Keyword.get(options, :module))
+    aud = Keyword.get(options, :aud)
+    iss = Keyword.get(options, :iss)
     quote do
       alias unquote(behaviour), as: Mod
       #      def init(options) do
       #        options
       #      end
+      @aud unquote(aud)
+      @iss unquote(iss)
       def call(conn, options) do
         user_id = conn.body_params[options[:key]]
         token = get_token(conn.req_headers)
@@ -20,7 +24,7 @@ defmodule AuthIntroduct do
         IO.puts("options_call: #{inspect options}")
         secret_key = get_secret_key
         IO.puts("secret_key: #{inspect secret_key}")
-        {:ok, jwt_body} = verify_jwt(token, secret_key, Keyword.get(options, :aud), Keyword.get(options, :iss))
+        {:ok, jwt_body} = verify_jwt(token, secret_key, @aud, @iss)
         IO.puts("verify_jwt: #{inspect jwt_body}")
         {:ok, sub} = Map.fetch(jwt_body, "sub")
         {:ok, role} = Map.fetch(jwt_body, "role")
@@ -36,10 +40,10 @@ defmodule AuthIntroduct do
       end
 
       def generate_token(conn, opt, aud, iss) do
-        IO.puts("opt: #{inspect opt}")
-        IO.puts("opt: #{inspect conn}")
+        IO.puts("@aud: #{inspect @aud}")
+        IO.puts("@iss: #{inspect @iss}")
         IO.puts("resp body: #{inspect conn.body_params}")
-        token = generate_jwt!(opt, get_secret_key, aud, iss)
+        token = generate_jwt!(opt, get_secret_key, @aud, @iss)
         IO.puts("token: #{inspect token}")
         token
       end
