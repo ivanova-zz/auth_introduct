@@ -19,7 +19,6 @@ defmodule AuthIntroduct do
         user_id = conn.body_params[options[:key]]
         token = get_token(conn.req_headers)
         IO.puts("authorization: #{inspect token}")
-        #        IO.puts("test_check_user: #{inspect Mod.get_user_id(user_id)}")
         IO.puts("options_call: #{inspect options}")
         secret_key = get_secret_key
         IO.puts("secret_key: #{inspect secret_key}")
@@ -30,7 +29,7 @@ defmodule AuthIntroduct do
 
         IO.puts("sub: #{inspect sub}")
         user = Mod.get_user(user_id)
-        answer = validate_user_id(user_id, sub, user, role, Mod.get_role(user.role_id))
+        answer = validate_user(user_id, sub, user, role, Mod.get_role(user.role_id))
         IO.puts("validate_user: #{inspect answer}")
         if {:ok, :authorized} == answer do
           conn
@@ -40,12 +39,7 @@ defmodule AuthIntroduct do
       end
 
       def generate_token(conn, opt) do
-        IO.puts("@aud: #{inspect @aud}")
-        IO.puts("@iss: #{inspect @iss}")
-        IO.puts("resp body: #{inspect conn.body_params}")
-        token = generate_jwt!(opt, get_secret_key, @aud, @iss)
-        IO.puts("token: #{inspect token}")
-        token
+        generate_jwt!(opt, get_secret_key, @aud, @iss)
       end
     end
   end
