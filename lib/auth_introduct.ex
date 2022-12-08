@@ -22,6 +22,8 @@ defmodule AuthIntroduct do
         IO.puts("authorization: #{inspect token}")
         #        IO.puts("test_check_user: #{inspect Mod.get_user_id(user_id)}")
         IO.puts("options_call: #{inspect options}")
+        IO.puts("@aud: #{inspect @aud}")
+        IO.puts("@iss: #{inspect @iss}")
         secret_key = get_secret_key
         IO.puts("secret_key: #{inspect secret_key}")
         {:ok, jwt_body} = verify_jwt(token, secret_key, @aud, @iss)
