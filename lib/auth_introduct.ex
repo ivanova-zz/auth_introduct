@@ -15,22 +15,23 @@ defmodule AuthIntroduct do
       @aud unquote(aud)
       @iss unquote(iss)
       def call(conn, options) do
-        try do
-
-          with token <- get_token(conn.req_headers),
-               secret_key <- get_secret_key,
-               {:ok, jwt_body} <- verify_jwt(token, secret_key, @aud, @iss),
-               {:ok, sub} <- get_jwt_param(jwt_body, "sub"),
-               {:ok, role} <- get_jwt_param(jwt_body, "role"),
-               user <- Mod.get_user(conn.body_params[options[:key]]),
-               answer <- validate_user(conn.body_params[options[:key]], sub, user, role, Mod.get_role(user.role_id))
-            do
-            if {:ok, :authorized} == answer do
-              conn
-            else
-              conn |> resp(401, "unauthorized") |> halt()
-            end
+        with token <- get_token(conn.req_headers),
+             secret_key <- get_secret_key,
+             {:ok, jwt_body} <- verify_jwt(token, secret_key, @aud, @iss),
+             {:ok, sub} <- get_jwt_param(jwt_body, "sub"),
+             {:ok, role} <- get_jwt_param(jwt_body, "role"),
+             user <- Mod.get_user(conn.body_params[options[:key]]),
+             answer <- validate_user(conn.body_params[options[:key]], sub, user, role, Mod.get_role(user.role_id))
+          do
+          if {:ok, :authorized} == answer do
+            conn
+          else
+            conn |> resp(401, "unauthorized") |> halt()
           end
+        else
+          e -> conn |> resp(401, "#{inspect e}") |> halt()
+        end
+
 
 #          user_id = conn.body_params[options[:key]]
 #          token = get_token(conn.req_headers)
@@ -52,9 +53,7 @@ defmodule AuthIntroduct do
 #          else
 #            conn |> resp(401, "unauthorized") |> halt()
 #          end
-        rescue
-           e -> conn |> resp(401, "#{inspect e}") |> halt()
-        end
+
       end
 
       def generate_token(conn, opt) do
