@@ -1,5 +1,5 @@
 defmodule AuthIntroductTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   use Plug.Test
 
 
@@ -24,7 +24,7 @@ defmodule AuthIntroductTest do
              |> put_req_header("accept", "application/json")
              |> put_req_header("authorization", "Bearer #{jwt}")
              |> DemoPlug.call([])
-      assert conn.status == 200
+      assert conn == 200
     end
   end
 end

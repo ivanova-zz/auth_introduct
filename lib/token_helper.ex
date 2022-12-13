@@ -33,8 +33,17 @@ defmodule AuthIntroduct.TokenHelper do
   def verify_jwt(token, secret, aud, iss) do
     signer = create_signer(secret)
 
-    token_config(aud, iss)
-    |> Joken.verify_and_validate(token, signer)
+#    token_config(aud, iss)
+#    |> Joken.verify_and_validate(token, signer)
+    conf = token_config(aud, iss)
+    ans = Joken.verify_and_validate(conf, token, signer)
+    IO.puts("ans: #{inspect ans}")
+    IO.puts("signer: #{inspect signer}")
+    IO.puts("token: #{inspect token}")
+    IO.puts("aud: #{inspect aud}")
+    IO.puts("iss: #{inspect iss}")
+    IO.puts("conf: #{inspect conf}")
+    ans
   end
 
   def generate_jwt!(claims, secret, aud, iss) do

@@ -13,7 +13,7 @@ defmodule AuthIntroduct do
 
       @aud unquote(aud)
       @iss unquote(iss)
-      @default_secret_key "HnzeaRD8Gv2HwRmZZBtcJf8aJaJFt4PoDpcdcfAXIzm0jDJeKHtQEIH1cL//n7kg"
+
       def call(conn, options) do
         with token <- TokenHelper.get_token(conn.req_headers),
              secret_key <- Config.get_secret_key,
