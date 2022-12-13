@@ -4,7 +4,7 @@ defmodule AuthIntroduct.MixProject do
   def project do
     [
       app: :auth_introduct,
-      version: "0.1.11",
+      version: "0.1.12",
       elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
       package: package(),

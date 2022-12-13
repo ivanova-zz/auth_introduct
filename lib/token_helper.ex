@@ -1,5 +1,6 @@
 defmodule AuthIntroduct.TokenHelper do
   use Joken.Config
+  alias AuthIntroduct.EmptyParam
 
   def get_token(headers) do
     Enum.reduce(headers, [], fn({k,v}, acc) ->
@@ -44,5 +45,14 @@ defmodule AuthIntroduct.TokenHelper do
       |> Joken.generate_and_sign(claims, signer)
 
     token
+  end
+
+  def get_jwt_param(jwt_body, key) do
+    {:ok, param} = Map.fetch(jwt_body, key)
+    if param do
+      {:ok, param}
+    else
+      {:invalid_payload, %EmptyParam{}}
+    end
   end
 end
