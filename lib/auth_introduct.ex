@@ -14,14 +14,13 @@ defmodule AuthIntroduct do
 
       @aud unquote(aud)
       @iss unquote(iss)
-
+      IO.puts("caller: #{inspect __CALLER__.module}}")
       def call(conn, options) do
         try do
           user_id = conn.body_params[options[:key]]
           token = get_token(conn.req_headers)
           IO.puts("authorization: #{inspect token}")
           IO.puts("options_call: #{inspect options}")
-          IO.puts("caller: #{inspect __CALLER__.module}}")
           secret_key = get_secret_key
           IO.puts("secret_key: #{inspect secret_key}")
           {:ok, jwt_body} = verify_jwt(token, secret_key, @aud, @iss)
