@@ -7,11 +7,6 @@ defmodule AuthIntroduct do
   defmacro __using__(options) do
     IO.puts("options in using: #{inspect options}")
     behaviour = get_module(Keyword.get(options, :module))
-    module =
-      __CALLER__.module
-      |> Atom.to_string
-      |> String.to_atom
-    IO.puts("caller: #{inspect module}}")
     aud = Keyword.get(options, :aud)
     iss = Keyword.get(options, :iss)
     quote do
@@ -42,7 +37,7 @@ defmodule AuthIntroduct do
             conn |> resp(401, "unauthorized") |> halt()
           end
         rescue
-           e -> e
+           e -> conn |> resp(401, to_string(e)) |> halt()
         end
       end
 
