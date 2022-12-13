@@ -37,7 +37,7 @@ defmodule AuthIntroduct do
             conn |> resp(401, "unauthorized") |> halt()
           end
         rescue
-           e -> conn |> resp(401, to_string(e.term)) |> halt()
+           e -> conn |> resp(401, "#{inspect e}") |> halt()
         end
       end
 
