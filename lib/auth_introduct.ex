@@ -1,11 +1,11 @@
 defmodule AuthIntroduct do
   import Plug.Conn
-  import AuthIntroduct.TokenHelper
-  import AuthIntroduct.Config
-  import AuthIntroduct.User
+  alias AuthIntroduct.TokenHelper
+  alias AuthIntroduct.Config
+  alias AuthIntroduct.User
 
   defmacro __using__(options) do
-    behaviour = get_module(Keyword.get(options, :module))
+    behaviour = TokenHelper.get_module(Keyword.get(options, :module))
     aud = Keyword.get(options, :aud)
     iss = Keyword.get(options, :iss)
     quote do
@@ -13,14 +13,15 @@ defmodule AuthIntroduct do
 
       @aud unquote(aud)
       @iss unquote(iss)
+      @default_secret_key "HnzeaRD8Gv2HwRmZZBtcJf8aJaJFt4PoDpcdcfAXIzm0jDJeKHtQEIH1cL//n7kg"
       def call(conn, options) do
-        with token <- get_token(conn.req_headers),
-             secret_key <- get_secret_key,
-             {:ok, jwt_body} <- verify_jwt(token, secret_key, @aud, @iss),
-             {:ok, sub} <- get_jwt_param(jwt_body, "sub"),
-             {:ok, role} <- get_jwt_param(jwt_body, "role"),
+        with token <- TokenHelper.get_token(conn.req_headers),
+             secret_key <- Config.get_secret_key,
+             {:ok, jwt_body} <- TokenHelper.verify_jwt(token, secret_key, @aud, @iss),
+             {:ok, sub} <- TokenHelper.get_jwt_param(jwt_body, "sub"),
+             {:ok, role} <- TokenHelper.get_jwt_param(jwt_body, "role"),
              user <- Mod.get_user(conn.body_params[options[:key]]),
-             answer <- validate_user(conn.body_params[options[:key]], sub, user, role, Mod.get_role(user.role_id))
+             answer <- User.validate_user(conn.body_params[options[:key]], sub, user, role, Mod.get_role(user.role_id))
           do
           if {:ok, :authorized} == answer do
             conn
@@ -33,7 +34,7 @@ defmodule AuthIntroduct do
       end
 
       def generate_token(conn, opt) do
-        generate_jwt!(opt, get_secret_key, @aud, @iss)
+        TokenHelper.generate_jwt!(opt, Config.get_secret_key, @aud, @iss)
       end
     end
   end
