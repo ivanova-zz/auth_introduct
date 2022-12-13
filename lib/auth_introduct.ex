@@ -7,6 +7,11 @@ defmodule AuthIntroduct do
   defmacro __using__(options) do
     IO.puts("options in using: #{inspect options}")
     behaviour = get_module(Keyword.get(options, :module))
+    module =
+      __CALLER__.module
+      |> Atom.to_string
+      |> String.to_atom
+    IO.puts("caller: #{inspect module}}")
     aud = Keyword.get(options, :aud)
     iss = Keyword.get(options, :iss)
     quote do
@@ -14,7 +19,6 @@ defmodule AuthIntroduct do
 
       @aud unquote(aud)
       @iss unquote(iss)
-      IO.puts("caller: #{inspect __CALLER__.module}}")
       def call(conn, options) do
         try do
           user_id = conn.body_params[options[:key]]
