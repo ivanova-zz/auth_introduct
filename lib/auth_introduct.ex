@@ -16,25 +16,30 @@ defmodule AuthIntroduct do
       @iss unquote(iss)
 
       def call(conn, options) do
-        user_id = conn.body_params[options[:key]]
-        token = get_token(conn.req_headers)
-        IO.puts("authorization: #{inspect token}")
-        IO.puts("options_call: #{inspect options}")
-        secret_key = get_secret_key
-        IO.puts("secret_key: #{inspect secret_key}")
-        {:ok, jwt_body} = verify_jwt(token, secret_key, @aud, @iss)
-        IO.puts("verify_jwt: #{inspect jwt_body}")
-        {:ok, sub} = Map.fetch(jwt_body, "sub")
-        {:ok, role} = Map.fetch(jwt_body, "role")
+        try do
+          user_id = conn.body_params[options[:key]]
+          token = get_token(conn.req_headers)
+          IO.puts("authorization: #{inspect token}")
+          IO.puts("options_call: #{inspect options}")
+          IO.puts("caller: #{inspect __CALLER__.module}}")
+          secret_key = get_secret_key
+          IO.puts("secret_key: #{inspect secret_key}")
+          {:ok, jwt_body} = verify_jwt(token, secret_key, @aud, @iss)
+          IO.puts("verify_jwt: #{inspect jwt_body}")
+          {:ok, sub} = Map.fetch(jwt_body, "sub")
+          {:ok, role} = Map.fetch(jwt_body, "role")
 
-        IO.puts("sub: #{inspect sub}")
-        user = Mod.get_user(user_id)
-        answer = validate_user(user_id, sub, user, role, Mod.get_role(user.role_id))
-        IO.puts("validate_user: #{inspect answer}")
-        if {:ok, :authorized} == answer do
-          conn
-        else
-          conn |> resp(401, "unauthorized") |> halt()
+          IO.puts("sub: #{inspect sub}")
+          user = Mod.get_user(user_id)
+          answer = validate_user(user_id, sub, user, role, Mod.get_role(user.role_id))
+          IO.puts("validate_user: #{inspect answer}")
+          if {:ok, :authorized} == answer do
+            conn
+          else
+            conn |> resp(401, "unauthorized") |> halt()
+          end
+        rescue
+           e -> e
         end
       end
 
