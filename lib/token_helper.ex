@@ -48,10 +48,16 @@ defmodule AuthIntroduct.TokenHelper do
 
   def generate_jwt!(claims, secret, aud, iss) do
     signer = create_signer(secret)
-
-    {:ok, token, _claims} =
-      token_config(aud, iss)
-      |> Joken.generate_and_sign(claims, signer)
+    IO.puts("aud: #{inspect aud}")
+    IO.puts("iss: #{inspect iss}")
+    IO.puts("signer: #{inspect signer}")
+    conf = token_config(aud, iss)
+    IO.puts("conf: #{inspect conf}")
+    {:ok, token, _claims} = Joken.generate_and_sign(conf, claims, signer)
+    IO.puts("token: #{inspect token}")
+#    {:ok, token, _claims} =
+#      token_config(aud, iss)
+#      |> Joken.generate_and_sign(claims, signer)
 
     token
   end
