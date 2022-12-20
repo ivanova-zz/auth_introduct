@@ -34,7 +34,11 @@ defmodule AuthIntroduct do
       end
 
       def generate_token(conn, opt) do
-        TokenHelper.generate_jwt!(opt, Config.get_secret_key, @aud, @iss)
+        with {:ok, claims} <- User.validate_claims!(opt) do
+          TokenHelper.generate_jwt!(claims, Config.get_secret_key, @aud, @iss)
+        else
+          e -> e
+        end
       end
     end
   end

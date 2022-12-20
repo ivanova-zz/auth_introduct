@@ -2,12 +2,9 @@ defmodule AuthIntroductTest do
   use ExUnit.Case, async: true
   use Plug.Test
   alias AuthIntroduct.Support.Auth
-
-
   doctest AuthIntroduct
 
   defmodule DemoPlug do
-#    use Plug.Builder
 
     use AuthIntroduct, key: "user", module: AuthIntroduct.Support.Auth, aud: "user_service", iss: "user_service"
 
@@ -40,12 +37,23 @@ defmodule AuthIntroductTest do
         |> DemoPipeline.call([key: "user"])
       assert conn.status == 200
     end
+    test "with wrong JWT" do
+      conn =
+        conn(:post, "/api/list", %{user: 44})
+        |> put_req_header("authorization", "Bearer wrong.jwt")
+        |> DemoPipeline.call([key: "user"])
+      assert conn.status == 401
+    end
   end
 
   describe "generate JWT" do
     test "positive test" do
       jwt = DemoPlug.generate_token(nil, Auth.get_user_claims("test"))
       assert jwt != nil
+    end
+    test "withot claims" do
+      jwt = DemoPlug.generate_token(nil, nil)
+      assert jwt == {:error, %AuthIntroduct.JwtGenerateEmptyParams{message: "Param role or sub is empty"}}
     end
   end
 end
