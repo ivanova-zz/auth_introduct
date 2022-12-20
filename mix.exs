@@ -4,7 +4,7 @@ defmodule AuthIntroduct.MixProject do
   def project do
     [
       app: :auth_introduct,
-      version: "0.1.17",
+      version: "0.1.18",
       elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
       package: package(),
@@ -25,11 +25,9 @@ defmodule AuthIntroduct.MixProject do
       {:cowboy, "~> 2.9"},
       {:plug, "~> 0.14 or ~> 1.0"},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
-      #      {:comeonin, "~> 4.0"},
-      #      {:bcrypt_elixir, "~> 1.0"},
-      #      {:guardian, "~> 1.0"},
       {:joken, "~> 2.5"},
-      {:envar, "~> 1.1.0"}
+      {:envar, "~> 1.1.0"},
+      {:jason, "~> 1.0"}
     ]
   end
 

@@ -9,6 +9,6 @@ defmodule AuthIntroduct.Support.Auth do
   end
 
   def get_user_claims(_user) do
-    %{sub: 44, role: "user"}
+    %{"sub" => 44, "role" => "user"}
   end
 end

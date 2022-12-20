@@ -38,4 +38,8 @@ defmodule AuthIntroduct do
       end
     end
   end
+
+  def call(conn, options) do
+    conn
+  end
 end
